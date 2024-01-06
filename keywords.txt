@@ -1,0 +1,28 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+HLK_LD2450		KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+connect			KEYWORD2
+refreshRadarData	KEYWORD2
+
+getTarget1X		KEYWORD2
+getTarget1Y		KEYWORD2
+getTarget1Speed		KEYWORD2
+getTarget1Resolution	KEYWORD2
+
+getTarget2X		KEYWORD2
+getTarget2Y		KEYWORD2
+getTarget2Speed		KEYWORD2
+getTarget2Resolution	KEYWORD2
+
+getTarget3X		KEYWORD2
+getTarget3Y		KEYWORD2
+getTarget3Speed		KEYWORD2
+getTarget3Resolution	KEYWORD2
+
