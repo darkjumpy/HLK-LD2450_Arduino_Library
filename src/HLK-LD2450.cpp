@@ -66,3 +66,127 @@ bool HLK_LD2450::refreshRadarData()
     }
   return false;
 }
+
+void HLK_LD2450::sendCommand(char *commandStr, char *commandValue, int commandValueLen){
+    // Start frame
+    HLK_LD2450_Serial.write(0xFD);
+    HLK_LD2450_Serial.write(0xFC);
+    HLK_LD2450_Serial.write(0xFB);
+    HLK_LD2450_Serial.write(0xFA);
+
+    // Command
+    int len = 2;
+    if (commandValue != nullptr)
+      len += commandValueLen;
+    HLK_LD2450_Serial.write(lowByte(len));
+    HLK_LD2450_Serial.write(highByte(len));
+
+    HLK_LD2450_Serial.write(commandStr[0]);
+    HLK_LD2450_Serial.write(commandStr[1]);
+
+    int index = 256000;
+    if (commandValue != nullptr) {
+      for (int i = 0; i < commandValueLen; i++) {
+        HLK_LD2450_Serial.write(commandValue[i]);
+      }
+    }
+
+    // End frame
+    HLK_LD2450_Serial.write(0x04);
+    HLK_LD2450_Serial.write(0x03);
+    HLK_LD2450_Serial.write(0x02);
+    HLK_LD2450_Serial.write(0x01);
+    delay(100);
+}
+
+void HLK_LD2450::setConfigMode(bool enable){
+    char cmd[2] = {enable ? (char)0xFF : (char)0xFE, 0x00};
+    char value[2] = {0x01, 0x00};
+    sendCommand(cmd, enable ? value : nullptr, enable ? 2 : 0);
+}
+
+  void HLK_LD2450::setSingle() {
+    char cmd[2] = {0x80, 0x00};
+    setConfigMode(true);
+    sendCommand(cmd, nullptr, 0);
+    setConfigMode(false);
+  }
+
+  void HLK_LD2450::setMultiple() {
+    char cmd[2] = {0x90, 0x00};
+    setConfigMode(true);
+    sendCommand(cmd, nullptr, 0);
+    setConfigMode(false);
+  }
+
+  void HLK_LD2450::getFwVersion() {
+    char cmd[2] = {0xA0, 0x00};
+    setConfigMode(true);
+    sendCommand(cmd, nullptr, 0);
+    setConfigMode(false);
+  }
+
+  void HLK_LD2450::setBaudrate(int index) {
+    char cmd[2] = {0xA1, 0x00};
+    char value[2] = {(char)index, 0x00};
+    setConfigMode(true);
+    sendCommand(cmd, value, 2);
+    setConfigMode(false);
+  }
+
+  void HLK_LD2450::factoryReset() {
+    char cmd[2] = {0xA2, 0x00};
+    setConfigMode(true);
+    sendCommand(cmd, nullptr, 0);
+    setConfigMode(false);
+  }
+
+  void HLK_LD2450::reboot() {
+    char cmd[2] = {0xA3, 0x00};
+    setConfigMode(true);
+    sendCommand(cmd, nullptr, 0);
+    setConfigMode(false);
+    // Not need to exit config mode because the ra2413mt will reboot automatically
+  }
+
+  void HLK_LD2450::setBluetooth(bool enable) {
+    char cmd[2] = {0xA4, 0x00};
+    char value[2] = {enable? (char)0x01: (char)0x00, 0x00};
+    setConfigMode(true);
+    sendCommand(cmd, value, 2);
+    setConfigMode(false);
+  }
+
+  void HLK_LD2450::getMacAddress() {
+    char cmd[2] = {0xA5, 0x00};
+    char value[2] = {0x01, 0x00};
+    setConfigMode(true);
+    sendCommand(cmd, value, 2);
+    setConfigMode(false);
+  }
+
+  void HLK_LD2450::getZone() {
+    char cmd[2] = {0xC1, 0x00};
+    setConfigMode(true);
+    sendCommand(cmd, nullptr, 0);
+    setConfigMode(false);
+  }
+
+  void HLK_LD2450::setZone(int type, int z1x1, int z1y1, int z1x2, int z1y2, int z2x1, int z2y1, int z2x2, int z2y2, int z3x1, int z3y1, int z3x2, int z3y2) {
+    char cmd[2] = {0xC2, 0x00};
+    char value[26] = {lowByte(type), highByte(type), \
+        lowByte(z1x1), highByte(z1x1), lowByte(z1y1), highByte(z1y1), lowByte(z1x2), highByte(z1x2), lowByte(z1y2), highByte(z1y2), \
+        lowByte(z2x1), highByte(z2x1), lowByte(z2y1), highByte(z2y1), lowByte(z2x2), highByte(z2x2), lowByte(z2y2), highByte(z2y2), \
+        lowByte(z3x1), highByte(z3x1), lowByte(z3y1), highByte(z3y1), lowByte(z3x2), highByte(z3x2), lowByte(z3y2), highByte(z3y2)};
+    setConfigMode(true);
+    sendCommand(cmd, value, 26);
+    setConfigMode(false);
+  }
+
+  void HLK_LD2450::getInfo() {
+    setConfigMode(true);
+    getMacAddress();
+    getFwVersion();
+    getZone();
+    setConfigMode(false);
+  }

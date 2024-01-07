@@ -1,4 +1,3 @@
-//Example created for ESP32
 #include "HLK-LD2450.h"
 
 // Definition of pins to which the sensor is connected

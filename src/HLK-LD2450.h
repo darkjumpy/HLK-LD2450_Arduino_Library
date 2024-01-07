@@ -27,6 +27,24 @@ class HLK_LD2450
     bool connect(int bitrate, int rx, int tx);
     bool refreshRadarData();
 
+    // Radar commands
+    void sendCommand(char *commandStr, char *commandValue, int commandValueLen);
+    void setConfigMode(bool enable);
+
+    void factoryReset();
+    void reboot();
+
+    void setSingle();
+    void setMultiple();
+    void setBluetooth(bool enable);
+    void setBaudrate(int index);
+    void setZone(int type, int z1x1, int z1y1, int z1x2, int z1y2, int z2x1, int z2y1, int z2x2, int z2y2, int z3x1, int z3y1, int z3x2, int z3y2);
+
+    void getMacAddress();
+    void getZone();
+    void getInfo();
+    void getFwVersion();
+
     // Getters for the first target
     int16_t getTarget1X(){return radarTargets[0].x;}
     int16_t getTarget1Y(){return radarTargets[0].y;}
